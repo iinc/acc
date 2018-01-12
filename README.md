@@ -63,7 +63,7 @@ After for training for 10 hours on 100,000 images, here is the result.
 
 The green lines represent the different classes. The thickness of the line increases as the network is more confident that the image belongs in that class. The network was not trained on these videos. It is important to note that the network is not confused by shadows on the road like the computer vision approach was. 
 
-[Training code](cnnpy)
+[Training code](cnn.py)
 
 By knowing the approximate distance from the car in front, the vehicles speed can be automatically adjusted to maintain a safe following distance.
 
