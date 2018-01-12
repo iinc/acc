@@ -29,6 +29,10 @@ This works well when the road surface is a single color, the road markings are c
 You can see this technique applied to a video here: [https://www.youtube.com/watch?v=20JxqClLxec](https://www.youtube.com/watch?v=20JxqClLxec)
 There are plenty of improvements that could be done, but I decided to try out a different approach. I may come back to this in the future. 
 
+[Code](cv.py)
+
+
+
 ### Convolution Neural Networks
 My second attempt was to use a neural network as it would be able to handle the noise on the road more easily. 
 
@@ -59,5 +63,40 @@ After for training for 10 hours on 100,000 images, here is the result.
 
 The green lines represent the different classes. The thickness of the line increases as the network is more confident that the image belongs in that class. The network was not trained on these videos. It is important to note that the network is not confused by shadows on the road like the computer vision approach was. 
 
+[Training code](cnnpy)
+
 By knowing the approximate distance from the car in front, the vehicles speed can be automatically adjusted to maintain a safe following distance.
+
+There are two ways I can electronically control my car’s accelerator. The first being the more basic, is to use the existing cruise control and change the speed by pressing the accelerate and coast buttons. The second way is to use the speed control servo that the existing cruise control uses to actuate the throttle. (If you are interested on how it works, there is a great video [here](https://www.youtube.com/watch?v=nZhwYZYvhNA).) To control the servo, I would need a device with general-purpose input/output that supports pulse width modulation. The Raspberry Pi I am using does not support that so I chose to go with the more basic approach of pressing the cruise control buttons.
+
+The cruise control buttons are extremely simple. There are only two wires. When you press a button, it completes the circuit with a specific resistance. The computer knows what button you pressed because each button has provides a unique resistance. 
+
+
+
+![](images/1.jpg?raw=true)
+
+![](images/2.jpg?raw=true)
+
+![](images/3.jpg?raw=true)
+
+Below is the circuit used to “press” the cruise control buttons. The Raspberry Pi controls when the relays are activated. The relays complete the circuit to the cars computer with a specific resistance.
+
+![](images/6.jpg?raw=true)
+
+![](images/5.jpg?raw=true)
+
+![](images/4.jpg?raw=true)
+
+[Code](app.py)
+
+
+
+
+
+# Future Improvements
+
+Right now the adaptive cruise control is fairly basic. When the vehicle in lane ahead is far away, it increases the cruise speed and when the vehicle is too close, it decreases the cruise speed. 
+
+Ideally I would want to be to control the throttle directly instead of relying on the car's existing cruise control.  To do this safely I would need to be able to monitor the throttle position, engine rpm, and speed. All of these measurements are available directly from the car's on-board diagnostics port. With these measurements and direct control over the car's throttle, I would be able to more accurately follow a vehicle at a constant distance.
+
 
