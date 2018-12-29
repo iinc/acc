@@ -21,7 +21,7 @@ def find_edges(image):
     high_thresh, thresh_im = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     lowThresh = 0.5*high_thresh
 
-    canny = cv2.Canny(blurred, lowThresh, high_thresh);
+    canny = cv2.Canny(blurred, lowThresh, high_thresh)
     return canny
 
 
@@ -119,7 +119,7 @@ def process_image(image):
         cv2.circle(warp_edges_img, (c*width, int(r*height)), 2, (0, 255, 0), thickness=2)
 
         if max_c - min_c < lane_width_min/width:
-            break;
+            break
 
         if min_c > 0:
             left_points.append((r, min_c))
