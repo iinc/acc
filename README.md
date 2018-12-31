@@ -1,6 +1,6 @@
 # Adaptive Cruise Control Prototype
 
-The goal of this project was to create an [adaptive cruise control](https://en.wikipedia.org/wiki/Autonomous_cruise_control_system) prototype without relying on expensive hardware components (such as radar or lidar). The biggest challenge was figuring out how to accurately determine the distance from the vehicle in lane in front of the car. To do this, I relied on computer vision and machine learning techniques to analyze images from a camera mounted near the top of the windshield.
+The goal of this project was to create an [adaptive cruise control](https://en.wikipedia.org/wiki/Autonomous_cruise_control_system) prototype without relying on expensive hardware components (such as radar or lidar). The biggest challenge was figuring out how to accurately determine the distance to the vehicle ahead of my car. To do this, I relied on computer vision and machine learning techniques to analyze images from a camera mounted at the top of the windshield.
 
 ### Computer Vision
 My first attempt at determining the distance from cars relies on computer vision with the [OpenCV](https://opencv.org/) library. I will walk you through the algorithm.
@@ -9,7 +9,7 @@ Here is the initial image. The green lines highlight the area we are focusing on
 
 ![](images/dAQGWua.jpg?raw=true)
 
-First, we convert the image to gray scale `cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)`, blur it using a Gaussian filter to reduce noise `cv2.GaussianBlur(grayscale_image, (3, 3), 0)`, and apply edge detection `cv2.Canny(blurred_image, low_threshold, high_threshold)`. This leaves us with a quiet image where the lane in front of us is easily distinguishable.
+First, we convert the image to gray scale `cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)`, blur it using a Gaussian filter to reduce noise `cv2.GaussianBlur(grayscale_image, (3, 3), 0)`, and apply edge detection `cv2.Canny(blurred_image, low_threshold, high_threshold)`. This leaves us with a quiet image where the lane is easily distinguishable.
 
 ![](images/wmHKDcW.jpg?raw=true)
 
@@ -20,7 +20,7 @@ Next, we can warp/transform the image to only contain the area we want to focus 
 
 ![](images/N255LUZ.png?raw=true)
 
-Then we can try to detect the empty portion of the lane. We start out at the bottom center of the image and work our way up. The green dots represent the starting position in each row. The horizontal white lines extend out from the dot until they contact an edge. The edge intersections of the current row influce the starting position of the next row. This allows a curved road to be followed. The while lines extend to the top of the image or until they are blocked by an edge.  
+Then we can try to detect the empty portion of the lane. We start out at the bottom center of the image and work our way up. The green dots represent the starting position in each row. The horizontal white lines extend out from the dot until they contact an edge. The edge intersections of the current row influce the starting position of the next row. This allows a curved road to be followed. The white lines continue to the top of the image or until they are blocked by an edge.  
 
 ![](images/3SdwGub.png?raw=true)
 
@@ -48,7 +48,7 @@ Next, we shrink the image down so that it is quicker for a neural network to pro
 
 ![](images/bTqLnGK.jpg?raw=true)
 
-This tiny image is the input to the network. I manually classified thousands these images into eight different categories based on the distance from the car ahead. The output of the network is the probability of an image belonging to each one of these categories.
+This tiny image is the input to the network. I manually classified thousands these images into eight different categories based on the distance to the car ahead. The output of the network is the probability of an image belonging to each one of these categories.
 
 Below are two videos showcasing the network in action.
 
@@ -68,7 +68,7 @@ Based on output of the network, we can estimate the relative distance from the c
 
 There are two ways I can electronically control my car’s accelerator. 
 
-The first is the more basic approach of using the existing cruise control system and changing the speed by pressing the accelerate and coast buttons. The second way is to directly use the speed control servo that the existing cruise control uses to actuate the throttle. (If you are interested on how it works, there is a great video [here](https://www.youtube.com/watch?v=nZhwYZYvhNA).) To control the servo, I would need a device with general-purpose input/output that supports pulse width modulation. The Raspberry Pi I am using does not support that, so I chose to go with the more basic approach of simply pressing the cruise control buttons. Additionally, pressing the buttons and letting the car handle the throttle is much safer than trying to reverse engineer the servo and using it directly.
+The first is the more basic approach of using the existing cruise control system and changing the speed by pressing the accelerate and coast buttons. The second way is to directly use the speed control servo that the existing cruise control uses to actuate the throttle. (If you are interested on how it works, there is a great video [here](https://www.youtube.com/watch?v=nZhwYZYvhNA).) To control the servo, I would need a device with general-purpose input/output that supports pulse width modulation. The Raspberry Pi I am using does not support that, so I chose to go with the more basic approach of simply pressing the cruise control buttons. Additionally, pressing the buttons and letting the car handle the throttle is much safer than trying to reverse engineer the servo and use it directly.
 
 The cruise control buttons are extremely simple. There are only two wires. When you press a button, it completes the circuit with a specific resistance. The computer knows what button you pressed because each button has a unique resistance. 
 
@@ -100,4 +100,4 @@ Testing the system was done with the Raspberry Pi disconnected from the car to e
 
 Use a [Kalman filter](https://en.wikipedia.org/wiki/Kalman_filter) to more accurately estimate the distance from cars ahead. Right now, I use an average of previous measurements to attempt to handle noise.
 
-Ideally, I would want to be to control the throttle directly instead of relying on the car's existing cruise control.  To do this safely I would need to be able to monitor the throttle position, engine rpm, and speed. All of these measurements are available directly from the car's on-board diagnostics port. With these measurements and direct control over the car's throttle, I would be able to more effectively control the car's speed.
+Ideally, I would want to be to control the throttle directly instead of relying on the car's existing cruise control. To do this safely I would need to be able to monitor the throttle position, engine rpm, and speed. All of these measurements are available directly from the car's on-board diagnostics port. With these measurements and direct control over the car's throttle, I would be able to more effectively control the car's speed.
